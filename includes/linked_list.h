@@ -14,7 +14,13 @@
   typedef struct {                                                             \
     LL_TYPE value;                                                             \
     void *next;                                                                \
-  }##LL_NODE_NAME;
+  }##LL_NODE_NAME;                                                             \
+                                                                               \
+  inline void create_node(LL_NODE_NAME *variable, LL_TYPE value) {             \
+    variable = malloc(sizeof(LL_NODE_NAME));                                   \
+    memset(variable, 0, sizeof(LL_NODE_NAME));                                 \
+    variable->value = value;                                                   \
+  }
 
 #define CREATE_LINKED_LIST_NODE(LL_VARIABLE, LL_VALUE, LL_NODE_NAME)           \
   LL_VARIABLE = malloc(sizeof(LL_NODE_NAME));                                  \
