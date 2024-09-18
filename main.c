@@ -2,7 +2,7 @@
 
 #include "includes/linked_list.h"
 
-CREATE_LINKED_LIST(const char *, llnode_t)
+CREATE_LINKED_LIST_NODE_STRUCT(const char *, llnode_t)
 
 int main() {
   llnode_t *head_node = NULL;

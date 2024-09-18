@@ -11,13 +11,13 @@
  * created linked lists
  */
 
-#define CREATE_LINKED_LIST(TYPE, NODE_NAME)                                    \
+#define CREATE_LINKED_LIST_NODE_STRUCT(TYPE, NODE_NAME)                        \
   typedef struct {                                                             \
     TYPE value;                                                                \
     void *next;                                                                \
   }##NODE_NAME;
 
-#define CREATE_NODE(VARIABLE, VALUE, NODE_NAME)                                \
+#define CREATE_LINKED_LIST_NODE(VARIABLE, VALUE, NODE_NAME)                    \
   VARIABLE = malloc(sizeof(NODE_NAME));                                        \
   memset(VARIABLE, 0, sizeof(NODE_NAME));                                      \
   (VARIABLE)->value = VALUE;
@@ -25,7 +25,7 @@
 #define ADD_BACKWARD_LINKED_LIST(HEAD_NODE, END_NODE, VALUE, NODE_NAME)        \
   {                                                                            \
     NODE_NAME *temp_node = NULL;                                               \
-    CREATE_NODE(temp_node, VALUE, NODE_NAME)                                   \
+    CREATE_LINKED_LIST_NODE(temp_node, VALUE, NODE_NAME)                       \
     if (NULL == (HEAD_NODE)) {                                                 \
       (HEAD_NODE) = temp_node;                                                 \
       (END_NODE) = HEAD_NODE;                                                  \
