@@ -8,8 +8,9 @@ int main() {
   llnode_t *head_node = NULL;
   llnode_t *end_node = NULL;
 
-  ADD_BACKWARD_LINKED_LIST(head_node, end_node, "asdasd", llnode_t)
-  ADD_BACKWARD_LINKED_LIST(head_node, end_node, "asdzxcwewq", llnode_t)
+  ADD_LAST_LINKED_LIST(head_node, end_node, "asdasd", llnode_t)
+  ADD_LAST_LINKED_LIST(head_node, end_node, "asdzxcwewq", llnode_t)
+  ADD_BEGIN_LINKED_LIST(head_node, end_node, "zxcasdqwe", llnode_t)
 
   llnode_t *iter = head_node;
 

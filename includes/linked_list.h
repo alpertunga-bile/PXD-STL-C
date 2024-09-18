@@ -6,9 +6,6 @@
 
 /*
  * creating dynamic typed linked list
- * highly recommended to used it in source file because of
- * the dynamicly created linked list will cause conflicts with other dynamicly
- * created linked lists
  */
 
 #define CREATE_LINKED_LIST_NODE_STRUCT(TYPE, NODE_NAME)                        \
@@ -22,7 +19,7 @@
   memset(VARIABLE, 0, sizeof(NODE_NAME));                                      \
   (VARIABLE)->value = VALUE;
 
-#define ADD_BACKWARD_LINKED_LIST(HEAD_NODE, END_NODE, VALUE, NODE_NAME)        \
+#define ADD_LAST_LINKED_LIST(HEAD_NODE, END_NODE, VALUE, NODE_NAME)            \
   {                                                                            \
     NODE_NAME *temp_node = NULL;                                               \
     CREATE_LINKED_LIST_NODE(temp_node, VALUE, NODE_NAME)                       \
@@ -32,6 +29,19 @@
     } else {                                                                   \
       (END_NODE)->next = (NODE_NAME *)temp_node;                               \
       (END_NODE) = temp_node;                                                  \
+    }                                                                          \
+  }
+
+#define ADD_BEGIN_LINKED_LIST(HEAD_NODE, END_NODE, VALUE, NODE_NAME)           \
+  {                                                                            \
+    NODE_NAME *temp_node = NULL;                                               \
+    CREATE_LINKED_LIST_NODE(temp_node, VALUE, NODE_NAME)                       \
+    if (NULL == (HEAD_NODE)) {                                                 \
+      (HEAD_NODE) = temp_node;                                                 \
+      (END_NODE) = HEAD_NODE;                                                  \
+    } else {                                                                   \
+      temp_node->next = HEAD_NODE;                                             \
+      (HEAD_NODE) = temp_node;                                                 \
     }                                                                          \
   }
 
