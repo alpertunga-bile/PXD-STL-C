@@ -9,15 +9,28 @@ int main() {
 
   int i = 0;
 
-  for (i = 0; i < 7; ++i) {
+  const int N_WRITE_TIMES = 4;
+
+  for (i = 0; i < N_WRITE_TIMES; ++i) {
     ADD_VAL_RING_BUFFER(ring_buffer, i)
   }
 
-  for (i = 0; i < 7; ++i) {
+  for (i = 0; i < N_WRITE_TIMES - 1; ++i) {
     int val = -1;
     GET_VAL_RING_BUFFER(ring_buffer, val)
 
-    printf("val: %d \n\r", val);
+    printf("read_index: %d | val: %d \n\r", ring_buffer.read_index, val);
+  }
+
+  for (i = 0; i < N_WRITE_TIMES; ++i) {
+    ADD_VAL_RING_BUFFER(ring_buffer, i + 7)
+  }
+
+  for (i = 0; i < N_WRITE_TIMES - 1; ++i) {
+    int val = -1;
+    GET_VAL_RING_BUFFER(ring_buffer, val)
+
+    printf("read_index: %d | val: %d \n\r", ring_buffer.read_index, val);
   }
 
   FREE_RING_BUFFER(ring_buffer)
