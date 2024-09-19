@@ -1,8 +1,10 @@
 #ifndef DYNAMIC_ARRAY_H
 #define DYNAMIC_ARRAY_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 /*
  * Generic dynamic array

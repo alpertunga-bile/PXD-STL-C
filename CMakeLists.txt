@@ -17,6 +17,7 @@ set(PXD_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sources)
 set(PXD_HEADER_FILES
     ${PXD_INCLUDE_DIR}/generic_linked_list.h
     ${PXD_INCLUDE_DIR}/dynamic_array.h
+    ${PXD_INCLUDE_DIR}/ring_buffer.h
 )
 
 set(PXD_SOURCE_FILES
@@ -24,6 +25,7 @@ set(PXD_SOURCE_FILES
 
     ${PXD_SOURCE_DIR}/generic_linked_list.c
     ${PXD_SOURCE_DIR}/dynamic_array.c
+    ${PXD_SOURCE_DIR}/ring_buffer.c
 )
 
 include_directories(
