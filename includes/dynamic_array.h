@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 /*
  * Generic dynamic array
  */
@@ -89,6 +88,8 @@
  * @param DA_NAME        Given name for the dynamic array variable
  * @example FREE_DYNAMIC_ARRAY(vector)
  */
-#define FREE_DYNAMIC_ARRAY(DA_NAME) free((DA_NAME).array);
+#define FREE_DYNAMIC_ARRAY(DA_NAME)                                            \
+  free((DA_NAME).array);                                                       \
+  (DA_NAME).array = NULL;
 
 #endif
