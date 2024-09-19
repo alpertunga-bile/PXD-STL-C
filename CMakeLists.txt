@@ -8,17 +8,22 @@ include(setup.cmake)
 
 set_c(99)
 enable_iwyu()
+enable_avx2()
 
 set(PXD_THIRD_PARTY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party)
 set(PXD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/includes)
 set(PXD_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sources)
 
 set(PXD_HEADER_FILES
-
+    ${PXD_INCLUDE_DIR}/generic_linked_list.h
+    ${PXD_INCLUDE_DIR}/dynamic_array.h
 )
 
 set(PXD_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/main.c
+
+    ${PXD_SOURCE_DIR}/generic_linked_list.c
+    ${PXD_SOURCE_DIR}/dynamic_array.c
 )
 
 include_directories(
