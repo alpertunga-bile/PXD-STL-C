@@ -6,7 +6,8 @@ enable_testing()
 
 include(setup.cmake)
 
-set_c(99)
+set(PROJECT_C_STANDARD 99)
+
 enable_iwyu()
 enable_avx2()
 
@@ -41,6 +42,8 @@ set(LIBS_TO_LINK
 )
 
 add_executable(${PROJECT_NAME} ${PXD_SOURCE_FILES})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES C_STANDARD ${PROJECT_C_STANDARD})
 
 target_link_libraries(${PROJECT_NAME} ${LIBS_TO_LINK})
 

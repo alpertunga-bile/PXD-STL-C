@@ -10,15 +10,6 @@ function(set_release)
     ENDIF(NOT MSVC)
 endfunction(set_release)
 
-function(set_c C_VERSION)
-    set(CMAKE_C_STANDARD ${C_VERSION})
-    set(CMAKE_C_STANDARD_REQUIRED ON)
-    
-    if(NOT MSVC)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu${C_VERSION}")
-    endif()
-endfunction(set_c)
-
 function(enable_avx2)
     # from glm repository's CMakeLists.txt
     if((CMAKE_C_COMPILER_ID MATCHES "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
