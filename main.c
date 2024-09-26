@@ -1,13 +1,18 @@
 #include <stdio.h>
 
-#include "hash.h"
+#include "hash_map.h"
+
+CREATE_HASH_MAP_INFO(hash_map_ll_info_t, hash_map_info_t, int, 10)
 
 int main() {
-  unsigned char *buffer = "zxcaszxcasdc";
-  size_t hash_value = hash_unsigned_char_ptr(buffer, 16);
+  hash_map_info_t hash_map;
 
-  int val = 12312;
-  hash_value = hash_int(val);
+  INIT_HASH_MAP_INFO(hash_map, hash_map_ll_info_t, hash_map_info_t, 10)
 
-  printf("%zu", hash_value);
+  ADD_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, int, 1)
+  ADD_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, int, 1)
+
+  FREE_HASH_MAP(hash_map, hash_map_ll_info_t)
+
+  return 0;
 }
