@@ -19,6 +19,7 @@ set(PXD_HEADER_FILES
     ${PXD_INCLUDE_DIR}/generic_linked_list.h
     ${PXD_INCLUDE_DIR}/dynamic_array.h
     ${PXD_INCLUDE_DIR}/ring_buffer.h
+    ${PXD_INCLUDE_DIR}/hash.h
 
     ${PXD_THIRD_PARTY_DIR}/blake3/c/blake3.h
 )
@@ -29,6 +30,7 @@ set(PXD_SOURCE_FILES
     ${PXD_SOURCE_DIR}/generic_linked_list.c
     ${PXD_SOURCE_DIR}/dynamic_array.c
     ${PXD_SOURCE_DIR}/ring_buffer.c
+    ${PXD_SOURCE_DIR}/hash.c
 )
 
 include_directories(
