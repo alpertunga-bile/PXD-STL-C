@@ -1,1 +1,1 @@
-#include "../includes/generic_linked_list.h"
+#include "generic_linked_list.h"
