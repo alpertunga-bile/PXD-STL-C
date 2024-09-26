@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(pxd-stl-c VERSION 0.1.0 LANGUAGES C CXX)
+project(pxd-stl-c VERSION 0.1.0 LANGUAGES C)
 
 include(CTest)
 enable_testing()
@@ -32,12 +32,15 @@ set(PXD_SOURCE_FILES
 )
 
 include_directories(
+    ${PXD_INCLUDE_DIR}
+    ${PXD_THIRD_PARTY_DIR}
 )
 
 set(COMMON_STD_HEADERS
     <stdio.h>
     <stdlib.h>
     <string.h>
+    <stdint.h>
 )
 
 add_subdirectory(${PXD_THIRD_PARTY_DIR}/blake3/c)
