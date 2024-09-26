@@ -19,6 +19,8 @@ set(PXD_HEADER_FILES
     ${PXD_INCLUDE_DIR}/generic_linked_list.h
     ${PXD_INCLUDE_DIR}/dynamic_array.h
     ${PXD_INCLUDE_DIR}/ring_buffer.h
+
+    ${PXD_THIRD_PARTY_DIR}/blake3/c/blake3.h
 )
 
 set(PXD_SOURCE_FILES
@@ -38,8 +40,12 @@ set(COMMON_STD_HEADERS
     <string.h>
 )
 
+add_subdirectory(${PXD_THIRD_PARTY_DIR}/blake3/c)
+
 set(LIBS_TO_LINK
+    blake3
 )
+
 
 add_executable(${PROJECT_NAME} ${PXD_SOURCE_FILES})
 
