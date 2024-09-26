@@ -6,7 +6,7 @@ enable_testing()
 
 include(setup.cmake)
 
-set(PROJECT_C_STANDARD 99)
+set(PROJECT_C_STANDARD 11)
 
 enable_iwyu()
 enable_avx2()

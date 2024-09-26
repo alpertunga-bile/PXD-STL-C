@@ -3,6 +3,11 @@
 #include "hash.h"
 
 int main() {
-  size_t hash_value = get_hash_number_value(2.3);
+  unsigned char *buffer = "zxcaszxcasdc";
+  size_t hash_value = hash_unsigned_char_ptr(buffer, 16);
+
+  int val = 12312;
+  hash_value = hash_int(val);
+
   printf("%zu", hash_value);
 }
