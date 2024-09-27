@@ -6,26 +6,49 @@
 #include <string.h>
 
 #define CREATE_HASH_MAP_INFO(HM_LINKED_LIST_STRUCT_NAME, HM_STRUCT_NAME,       \
-                             HM_DATA_TYPE, HM_SIZE)                            \
+                             HM_KEY_DATA_TYPE, HM_VALUE_DATA_TYPE, HM_SIZE)    \
   typedef struct {                                                             \
-    HM_DATA_TYPE value;                                                        \
+    HM_VALUE_DATA_TYPE value;                                                  \
     void *next;                                                                \
   } HM_LINKED_LIST_STRUCT_NAME;                                                \
                                                                                \
   typedef struct {                                                             \
     HM_LINKED_LIST_STRUCT_NAME map[HM_SIZE];                                   \
     size_t capacity;                                                           \
+    size_t (*hash_function)(HM_KEY_DATA_TYPE);                                 \
   } HM_STRUCT_NAME;
 
 #define INIT_HASH_MAP_INFO(HM_NAME, HM_LINKED_LIST_STRUCT_NAME,                \
-                           HM_STRUCT_NAME, HM_SIZE)                            \
+                           HM_STRUCT_NAME, HM_HASH_FUNCTION, HM_SIZE)          \
   memset(&HM_NAME, 0, sizeof(HM_STRUCT_NAME));                                 \
+  (HM_NAME).hash_function = &HM_HASH_FUNCTION;                                 \
   (HM_NAME).capacity = HM_SIZE;
 
-#define ADD_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_DATA_TYPE,  \
-                           HM_VALUE)                                           \
+#define CONTAINS_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY,   \
+                                HM_VALUE, HM_BOOL_VARIABLE)                    \
   {                                                                            \
-    size_t hash_value = hash_##HM_DATA_TYPE(HM_VALUE);                         \
+    size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
+    int index = hash_value % ((HM_NAME).capacity);                             \
+    HM_BOOL_VARIABLE = 0;                                                      \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = &(HM_NAME).map[index];          \
+    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      if ((HM_VALUE) == current_node->value) {                                 \
+        HM_BOOL_VARIABLE = 1;                                                  \
+        break;                                                                 \
+      }                                                                        \
+                                                                               \
+      prev_node = current_node;                                                \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)(current_node->next);       \
+    }                                                                          \
+  }
+
+#define ADD_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME,                \
+                           HM_KEY_DATA_TYPE, HM_KEY, HM_VALUE)                 \
+  {                                                                            \
+    size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
     int found = 0;                                                             \
                                                                                \
