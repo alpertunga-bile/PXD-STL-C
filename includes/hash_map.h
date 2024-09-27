@@ -211,6 +211,10 @@
                                 size_t map_capacity,                           \
                                 size_t (*func)(HM_KEY_DATA_TYPE));             \
                                                                                \
+  int get_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,                 \
+                               HM_KEY_DATA_TYPE key,                           \
+                               HM_VALUE_DATA_TYPE * value);                    \
+                                                                               \
   int contains_key_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
                                   HM_KEY_DATA_TYPE key);                       \
                                                                                \
@@ -221,6 +225,14 @@
   void add_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,                \
                                 HM_KEY_DATA_TYPE key,                          \
                                 HM_VALUE_DATA_TYPE value);                     \
+                                                                               \
+  void add_or_update_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,      \
+                                          HM_KEY_DATA_TYPE key,                \
+                                          HM_VALUE_DATA_TYPE value);           \
+                                                                               \
+  void update_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
+                                  HM_KEY_DATA_TYPE key,                        \
+                                  HM_VALUE_DATA_TYPE new_value);               \
                                                                                \
   void free_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info);
 
@@ -242,6 +254,23 @@
     size_t index = hash_value % (hash_map_info->capacity);                     \
                                                                                \
     return index;                                                              \
+  }                                                                            \
+                                                                               \
+  int get_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,                 \
+                               HM_KEY_DATA_TYPE key,                           \
+                               HM_VALUE_DATA_TYPE * value) {                   \
+    int index = get_index_from_hash_##HM_FUNC_ID##(hash_map_info, key);        \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *node = hash_map_info->map[index];              \
+                                                                               \
+    while (NULL != node) {                                                     \
+      if (key == node->key) {                                                  \
+        *value = node->value;                                                  \
+        return 1;                                                              \
+      }                                                                        \
+    }                                                                          \
+                                                                               \
+    return 0;                                                                  \
   }                                                                            \
                                                                                \
   int contains_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,            \
@@ -310,6 +339,54 @@
     }                                                                          \
                                                                                \
     hash_map_info->total_elems++;                                              \
+  }                                                                            \
+                                                                               \
+  void add_or_update_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,      \
+                                          HM_KEY_DATA_TYPE key,                \
+                                          HM_VALUE_DATA_TYPE value) {          \
+    int index = get_index_from_hash_##HM_FUNC_ID##(hash_map_info, key);        \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = hash_map_info->map[index];      \
+    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      prev_node = current_node;                                                \
+                                                                               \
+      if (key == current_node->key) {                                          \
+        current_node->value = value;                                           \
+        return;                                                                \
+      }                                                                        \
+                                                                               \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;         \
+    }                                                                          \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *new_node =                                     \
+        malloc(sizeof(HM_LINKED_LIST_STRUCT_NAME));                            \
+    memset(new_node, 0, sizeof(HM_LINKED_LIST_STRUCT_NAME));                   \
+    new_node->key = key;                                                       \
+    new_node->value = value;                                                   \
+                                                                               \
+    if (NULL == hash_map_info->map[index]) {                                   \
+      hash_map_info->map[index] = new_node;                                    \
+    } else {                                                                   \
+      prev_node->next = new_node;                                              \
+    }                                                                          \
+                                                                               \
+    hash_map_info->total_elems++;                                              \
+  }                                                                            \
+  void update_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
+                                  HM_KEY_DATA_TYPE key,                        \
+                                  HM_VALUE_DATA_TYPE new_value) {              \
+    int index = get_index_from_hash_##HM_FUNC_ID##(hash_map_info, key);        \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *node = hash_map_info->map[index];              \
+                                                                               \
+    while (NULL != node) {                                                     \
+      if (key == node->key) {                                                  \
+        node->value = new_value;                                               \
+        return;                                                                \
+      }                                                                        \
+    }                                                                          \
   }                                                                            \
                                                                                \
   void free_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info) {                   \
