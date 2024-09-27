@@ -25,15 +25,22 @@
   (HM_NAME).hash_function = &HM_HASH_FUNCTION;                                 \
   (HM_NAME).capacity = HM_SIZE;
 
-#define CONTAINS_KEY_HASH_MAP(HM_NAME, HM_KEY, HM_BOOL_VARIABLE)               \
+#define CONTAINS_KEY_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY,     \
+                              HM_BOOL_VARIABLE)                                \
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
+    HM_BOOL_VARIABLE = 0;                                                      \
                                                                                \
-    if (NULL == (HM_NAME).map[index]) {                                        \
-      HM_BOOL_VARIABLE = 0;                                                    \
-    } else {                                                                   \
-      HM_BOOL_VARIABLE = 1;                                                    \
+    HM_LINKED_LIST_STRUCT_NAME *node = (HM_NAME).map[index];                   \
+                                                                               \
+    while (NULL != node) {                                                     \
+      if ((HM_KEY) == node->key) {                                             \
+        HM_BOOL_VARIABLE = 1;                                                  \
+        break;                                                                 \
+      }                                                                        \
+                                                                               \
+      node = (HM_LINKED_LIST_STRUCT_NAME *)node->next;                         \
     }                                                                          \
   }
 
@@ -45,15 +52,14 @@
     HM_BOOL_VARIABLE = 0;                                                      \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
-    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
                                                                                \
     while (NULL != current_node) {                                             \
-      if ((HM_VALUE) == current_node->value) {                                 \
+      if ((HM_KEY) == current_node->key &&                                     \
+          (HM_VALUE) == current_node->value) {                                 \
         HM_BOOL_VARIABLE = 1;                                                  \
         break;                                                                 \
       }                                                                        \
                                                                                \
-      prev_node = current_node;                                                \
       current_node = (HM_LINKED_LIST_STRUCT_NAME *)(current_node->next);       \
     }                                                                          \
   }
@@ -69,21 +75,23 @@
     HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
                                                                                \
     while (NULL != current_node) {                                             \
-      if ((HM_VALUE) == current_node->value) {                                 \
+      prev_node = current_node;                                                \
+                                                                               \
+      if ((HM_KEY) == current_node->key) {                                     \
         found = 1;                                                             \
         break;                                                                 \
       }                                                                        \
                                                                                \
-      prev_node = current_node;                                                \
       current_node = (HM_LINKED_LIST_STRUCT_NAME *)(current_node->next);       \
     }                                                                          \
                                                                                \
-    HM_LINKED_LIST_STRUCT_NAME *new_node =                                     \
-        malloc(sizeof(HM_LINKED_LIST_STRUCT_NAME));                            \
-    memset(new_node, 0, sizeof(HM_LINKED_LIST_STRUCT_NAME));                   \
-    new_node->value = HM_VALUE;                                                \
-                                                                               \
     if (0 == found) {                                                          \
+      HM_LINKED_LIST_STRUCT_NAME *new_node =                                   \
+          malloc(sizeof(HM_LINKED_LIST_STRUCT_NAME));                          \
+      memset(new_node, 0, sizeof(HM_LINKED_LIST_STRUCT_NAME));                 \
+      new_node->key = HM_KEY;                                                  \
+      new_node->value = HM_VALUE;                                              \
+                                                                               \
       if (NULL == (HM_NAME).map[index]) {                                      \
         (HM_NAME).map[index] = new_node;                                       \
       } else {                                                                 \
