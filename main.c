@@ -10,13 +10,15 @@ int main() {
   size_t capacity = 10;
   int key = 321;
   int value = 321;
+  int found = 0;
 
   init_temp_hash_map_info(&hash_map, capacity, &hash_int);
 
   add_value_temp_hash_map(&hash_map, key, value);
   add_value_temp_hash_map(&hash_map, key, value);
 
-  int found = contains_value_temp_hash_map(&hash_map, key, value);
+  found = contains_key_temp_hash_map(&hash_map, key);
+  found = contains_value_temp_hash_map(&hash_map, key, value);
   int total_elems = hash_map.total_elems;
 
   free_temp_hash_map(&hash_map);

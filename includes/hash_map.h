@@ -24,6 +24,18 @@
   (HM_NAME).hash_function = &HM_HASH_FUNCTION;                                 \
   (HM_NAME).capacity = HM_SIZE;
 
+#define CONTAINS_KEY_HASH_MAP(HM_NAME, HM_KEY, HM_BOOL_VARIABLE)               \
+  {                                                                            \
+    size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
+    int index = hash_value % ((HM_NAME).capacity);                             \
+                                                                               \
+    if (NULL == (HM_NAME).map[index]) {                                        \
+      HM_BOOL_VARIABLE = 0;                                                    \
+    } else {                                                                   \
+      HM_BOOL_VARIABLE = 1;                                                    \
+    }                                                                          \
+  }
+
 #define CONTAINS_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY,   \
                                 HM_VALUE, HM_BOOL_VARIABLE)                    \
   {                                                                            \
@@ -100,8 +112,9 @@
         current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;       \
                                                                                \
         free(prev_node);                                                       \
-        prev_node = NULL;                                                      \
       }                                                                        \
+                                                                               \
+      (HM_NAME).map[i] = NULL;                                                 \
     }                                                                          \
                                                                                \
     (HM_NAME).total_elems = 0;                                                 \
@@ -114,6 +127,9 @@
   void init_##HM_FUNC_ID##_info(HM_STRUCT_NAME *hash_map_info,                 \
                                 size_t map_capacity,                           \
                                 size_t (*func)(HM_KEY_DATA_TYPE));             \
+                                                                               \
+  int contains_key_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
+                                  HM_KEY_DATA_TYPE key);                       \
                                                                                \
   int contains_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,            \
                                     HM_KEY_DATA_TYPE key,                      \
@@ -179,6 +195,19 @@
         hash_map_info, index, value, prev_node, current_node);                 \
   }                                                                            \
                                                                                \
+  int contains_key_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
+                                  HM_KEY_DATA_TYPE key) {                      \
+    int index = get_index_from_hash_##HM_FUNC_ID##(hash_map_info, key);        \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *node = hash_map_info->map[index];              \
+                                                                               \
+    if (NULL == node) {                                                        \
+      return 0;                                                                \
+    }                                                                          \
+                                                                               \
+    return 1;                                                                  \
+  }                                                                            \
+                                                                               \
   void add_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,                \
                                 HM_KEY_DATA_TYPE key,                          \
                                 HM_VALUE_DATA_TYPE value) {                    \
@@ -226,8 +255,9 @@
         current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;       \
                                                                                \
         free(prev_node);                                                       \
-        prev_node = NULL;                                                      \
       }                                                                        \
+                                                                               \
+      hash_map_info->map[i] = NULL;                                            \
     }                                                                          \
                                                                                \
     hash_map_info->total_elems = 0;                                            \
