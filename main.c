@@ -8,14 +8,16 @@ int main() {
   hash_map_info_t hash_map;
 
   size_t capacity = 10;
-  int key = 321;
-  int value = 321;
   int found = 0;
+  int key = 16;
+  int value = 16;
 
   init_temp_hash_map_info(&hash_map, capacity, &hash_int);
 
-  add_value_temp_hash_map(&hash_map, key, value);
-  add_value_temp_hash_map(&hash_map, key, value);
+  int i;
+  for (i = 0; i < 100; ++i) {
+    add_value_temp_hash_map(&hash_map, i, i);
+  }
 
   found = contains_key_temp_hash_map(&hash_map, key);
   found = contains_value_temp_hash_map(&hash_map, key, value);
