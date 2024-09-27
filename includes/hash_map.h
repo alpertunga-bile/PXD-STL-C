@@ -102,4 +102,119 @@
     }                                                                          \
   }
 
+#define FORWARD_DECLARE_HASH_MAP_FUNCS(HM_LINKED_LIST_STRUCT_NAME,             \
+                                       HM_STRUCT_NAME, HM_KEY_DATA_TYPE,       \
+                                       HM_VALUE_DATA_TYPE)                     \
+                                                                               \
+  void init_hash_map_info(HM_STRUCT_NAME *hash_map_info, size_t map_capacity,  \
+                          size_t (*func)(HM_KEY_DATA_TYPE));                   \
+                                                                               \
+  int contains_value_hash_map(HM_STRUCT_NAME *hash_map_info,                   \
+                              HM_KEY_DATA_TYPE key, HM_VALUE_DATA_TYPE value); \
+                                                                               \
+  void add_value_hash_map(HM_STRUCT_NAME *hash_map_info, HM_KEY_DATA_TYPE key, \
+                          HM_VALUE_DATA_TYPE value);                           \
+                                                                               \
+  void free_hash_map(HM_STRUCT_NAME *hash_map_info);
+
+#define SOURCE_DECLARE_HASH_MAP_FUNCS(HM_LINKED_LIST_STRUCT_NAME,              \
+                                      HM_STRUCT_NAME, HM_KEY_DATA_TYPE,        \
+                                      HM_VALUE_DATA_TYPE)                      \
+                                                                               \
+  void init_hash_map_info(HM_STRUCT_NAME *hash_map_info, size_t map_capacity,  \
+                          size_t (*func)(HM_KEY_DATA_TYPE)) {                  \
+    memset(hash_map_info, 0, sizeof(HM_STRUCT_NAME));                          \
+    hash_map_info->capacity = map_capacity;                                    \
+    hash_map_info->hash_function = func;                                       \
+  }                                                                            \
+                                                                               \
+  size_t get_index_from_hash(HM_STRUCT_NAME *hash_map_info,                    \
+                             HM_KEY_DATA_TYPE key) {                           \
+    size_t hash_value = (*(hash_map_info->hash_function))(key);                \
+    size_t index = hash_value % (hash_map_info->capacity);                     \
+                                                                               \
+    return index;                                                              \
+  }                                                                            \
+                                                                               \
+  int find_set_prev_current_node(HM_STRUCT_NAME *hash_map_info, size_t index,  \
+                                 HM_VALUE_DATA_TYPE value,                     \
+                                 HM_LINKED_LIST_STRUCT_NAME *prev_node,        \
+                                 HM_LINKED_LIST_STRUCT_NAME *current_node) {   \
+    int found = 0;                                                             \
+                                                                               \
+    current_node = &(hash_map_info->map[index]);                               \
+    prev_node = NULL;                                                          \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      if (value == current_node->value) {                                      \
+        found = 1;                                                             \
+        break;                                                                 \
+      }                                                                        \
+                                                                               \
+      prev_node = current_node;                                                \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)(current_node->next);       \
+    }                                                                          \
+                                                                               \
+    return found;                                                              \
+  }                                                                            \
+                                                                               \
+  int contains_value_hash_map(HM_STRUCT_NAME *hash_map_info,                   \
+                              HM_KEY_DATA_TYPE key,                            \
+                              HM_VALUE_DATA_TYPE value) {                      \
+    int index = get_index_from_hash(hash_map_info, key);                       \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = NULL;                           \
+    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
+                                                                               \
+    return find_set_prev_current_node(hash_map_info, index, value, prev_node,  \
+                                      current_node);                           \
+  }                                                                            \
+                                                                               \
+  void add_value_hash_map(HM_STRUCT_NAME *hash_map_info, HM_KEY_DATA_TYPE key, \
+                          HM_VALUE_DATA_TYPE value) {                          \
+    int index = get_index_from_hash(hash_map_info, key);                       \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = NULL;                           \
+    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
+                                                                               \
+    int found = find_set_prev_current_node(hash_map_info, index, value,        \
+                                           prev_node, current_node);           \
+                                                                               \
+    if (0 == found) {                                                          \
+      if (NULL == hash_map_info->map[index].next) {                            \
+        hash_map_info->map[index].value = value;                               \
+      } else {                                                                 \
+        HM_LINKED_LIST_STRUCT_NAME *new_node =                                 \
+            malloc(sizeof(HM_LINKED_LIST_STRUCT_NAME));                        \
+        memset(new_node, 0, sizeof(HM_LINKED_LIST_STRUCT_NAME));               \
+        new_node->value = value;                                               \
+        prev_node->next = new_node;                                            \
+      }                                                                        \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  void free_hash_map(HM_STRUCT_NAME *hash_map_info) {                          \
+    int i;                                                                     \
+    int capacity = hash_map_info->capacity;                                    \
+                                                                               \
+    for (i = 0; i < capacity; ++i) {                                           \
+      HM_LINKED_LIST_STRUCT_NAME *current_node = &(hash_map_info->map[i]);     \
+                                                                               \
+      if (NULL == current_node->next) {                                        \
+        continue;                                                              \
+      }                                                                        \
+                                                                               \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;         \
+      HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                            \
+                                                                               \
+      while (NULL != current_node) {                                           \
+        prev_node = current_node;                                              \
+        current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;       \
+                                                                               \
+        free(prev_node);                                                       \
+        prev_node = NULL;                                                      \
+      }                                                                        \
+    }                                                                          \
+  }
+
 #endif
