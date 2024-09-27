@@ -17,11 +17,14 @@ int main() {
 
   int i;
   for (i = 0; i < 100; ++i) {
-    ADD_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, int, i, i)
+    ADD_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, i, i)
   }
 
   CONTAINS_KEY_HASH_MAP(hash_map, hash_map_ll_info_t, key, found)
   CONTAINS_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, key, value, found)
+
+  int node_value = 0;
+  GET_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, key, node_value)
 
   int total_elems = hash_map.total_elems;
 

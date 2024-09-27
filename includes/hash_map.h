@@ -64,8 +64,26 @@
     }                                                                          \
   }
 
-#define ADD_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME,                \
-                           HM_KEY_DATA_TYPE, HM_KEY, HM_VALUE)                 \
+#define GET_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY,        \
+                           HM_VARIABLE)                                        \
+  {                                                                            \
+    size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
+    int index = hash_value % ((HM_NAME).capacity);                             \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      if ((HM_KEY) == current_node->key) {                                     \
+        HM_VARIABLE = current_node->value;                                     \
+        break;                                                                 \
+      }                                                                        \
+                                                                               \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;         \
+    }                                                                          \
+  }
+
+#define ADD_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY,        \
+                           HM_VALUE)                                           \
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
@@ -78,6 +96,62 @@
       prev_node = current_node;                                                \
                                                                                \
       if ((HM_KEY) == current_node->key) {                                     \
+        found = 1;                                                             \
+        break;                                                                 \
+      }                                                                        \
+                                                                               \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)(current_node->next);       \
+    }                                                                          \
+                                                                               \
+    if (0 == found) {                                                          \
+      HM_LINKED_LIST_STRUCT_NAME *new_node =                                   \
+          malloc(sizeof(HM_LINKED_LIST_STRUCT_NAME));                          \
+      memset(new_node, 0, sizeof(HM_LINKED_LIST_STRUCT_NAME));                 \
+      new_node->key = HM_KEY;                                                  \
+      new_node->value = HM_VALUE;                                              \
+                                                                               \
+      if (NULL == (HM_NAME).map[index]) {                                      \
+        (HM_NAME).map[index] = new_node;                                       \
+      } else {                                                                 \
+        prev_node->next = new_node;                                            \
+      }                                                                        \
+                                                                               \
+      (HM_NAME).total_elems++;                                                 \
+    }                                                                          \
+  }
+
+#define UPDATE_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY,     \
+                              HM_VALUE)                                        \
+  {                                                                            \
+    size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
+    int index = hash_value % ((HM_NAME).capacity);                             \
+    int found = 0;                                                             \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      if ((HM_KEY) == current_node->key) {                                     \
+        current_node->value = HM_VALUE;                                        \
+        break;                                                                 \
+      }                                                                        \
+    }                                                                          \
+  }
+
+#define ADD_OR_UPDATE_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME,      \
+                                     HM_KEY, HM_VALUE)                         \
+  {                                                                            \
+    size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
+    int index = hash_value % ((HM_NAME).capacity);                             \
+    int found = 0;                                                             \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
+    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      prev_node = current_node;                                                \
+                                                                               \
+      if ((HM_KEY) == current_node->key) {                                     \
+        current_node->value = HM_VALUE;                                        \
         found = 1;                                                             \
         break;                                                                 \
       }                                                                        \
