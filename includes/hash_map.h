@@ -134,6 +134,8 @@
         current_node->value = HM_VALUE;                                        \
         break;                                                                 \
       }                                                                        \
+                                                                               \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;         \
     }                                                                          \
   }
 
@@ -173,6 +175,34 @@
       }                                                                        \
                                                                                \
       (HM_NAME).total_elems++;                                                 \
+    }                                                                          \
+  }
+
+#define REMOVE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY)           \
+  {                                                                            \
+    size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
+    int index = hash_value % ((HM_NAME).capacity);                             \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
+    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      if ((HM_KEY) == current_node->key) {                                     \
+        break;                                                                 \
+      }                                                                        \
+                                                                               \
+      prev_node = current_node;                                                \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;         \
+    }                                                                          \
+                                                                               \
+    if (NULL != current_node) {                                                \
+      if (NULL == prev_node) {                                                 \
+        (HM_NAME).map[index] = current_node->next;                             \
+      } else {                                                                 \
+        prev_node->next = current_node->next;                                  \
+      }                                                                        \
+                                                                               \
+      (HM_NAME).total_elems--;                                                 \
     }                                                                          \
   }
 
@@ -233,6 +263,9 @@
   void update_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
                                   HM_KEY_DATA_TYPE key,                        \
                                   HM_VALUE_DATA_TYPE new_value);               \
+                                                                               \
+  void remove_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
+                                  HM_KEY_DATA_TYPE key);                       \
                                                                                \
   void free_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info);
 
@@ -374,6 +407,7 @@
                                                                                \
     hash_map_info->total_elems++;                                              \
   }                                                                            \
+                                                                               \
   void update_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
                                   HM_KEY_DATA_TYPE key,                        \
                                   HM_VALUE_DATA_TYPE new_value) {              \
@@ -386,6 +420,35 @@
         node->value = new_value;                                               \
         return;                                                                \
       }                                                                        \
+                                                                               \
+      node = (HM_LINKED_LIST_STRUCT_NAME *)node->next;                         \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  void remove_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
+                                  HM_KEY_DATA_TYPE key) {                      \
+    int index = get_index_from_hash_##HM_FUNC_ID##(hash_map_info, key);        \
+                                                                               \
+    HM_LINKED_LIST_STRUCT_NAME *current_node = hash_map_info->map[index];      \
+    HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
+                                                                               \
+    while (NULL != current_node) {                                             \
+      if (key == current_node->key) {                                          \
+        break;                                                                 \
+      }                                                                        \
+                                                                               \
+      prev_node = current_node;                                                \
+      current_node = (HM_LINKED_LIST_STRUCT_NAME *)current_node->next;         \
+    }                                                                          \
+                                                                               \
+    if (NULL == current_node) {                                                \
+      return;                                                                  \
+    }                                                                          \
+                                                                               \
+    if (NULL == prev_node) {                                                   \
+      hash_map_info->map[index] = current_node->next;                          \
+    } else {                                                                   \
+      prev_node->next = current_node->next;                                    \
     }                                                                          \
   }                                                                            \
                                                                                \
