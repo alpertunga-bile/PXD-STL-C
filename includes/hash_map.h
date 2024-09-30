@@ -121,7 +121,7 @@
   }
 
 #define UPDATE_VALUE_HASH_MAP(HM_NAME, HM_LINKED_LIST_STRUCT_NAME, HM_KEY,     \
-                              HM_VALUE)                                        \
+                              HM_NEW_VALUE)                                    \
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
@@ -130,7 +130,7 @@
                                                                                \
     while (NULL != current_node) {                                             \
       if ((HM_KEY) == current_node->key) {                                     \
-        current_node->value = HM_VALUE;                                        \
+        current_node->value = HM_NEW_VALUE;                                    \
         break;                                                                 \
       }                                                                        \
                                                                                \

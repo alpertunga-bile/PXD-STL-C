@@ -58,3 +58,49 @@ int test_hash_map_w_funcs() {
 
   free_temp_hash_map(&hash_map);
 }
+
+int test_hash_map_w_macros() {
+  hash_map_info_t hash_map;
+  int key = 16;
+  int value = 16;
+  int new_value = 32;
+  /* it has to be same with the CREATE_ macro HM_SIZE variable */
+  int capacity = 128;
+  int ret_val = 1;
+
+  INIT_HASH_MAP_INFO(hash_map, hash_map_ll_info_t, hash_map_info_t, hash_int,
+                     capacity)
+
+  int i = 0;
+  for (i = 0; i < 100; ++i) {
+    ADD_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, i, i)
+  }
+
+  CONTAINS_KEY_HASH_MAP(hash_map, hash_map_ll_info_t, key, ret_val)
+
+  if (1 == ret_val) {
+    printf("Key map didn't contain %d key value\n\r", key);
+    return ret_val;
+  }
+
+  GET_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, key, value)
+
+  printf("Key : %4d | Value: %4d\n\r", key, value);
+
+  UPDATE_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, key, new_value)
+
+  GET_VALUE_HASH_MAP(hash_map, hash_map_ll_info_t, key, value)
+
+  printf("Key : %4d | Value: %4d\n\r", key, value);
+
+  REMOVE_HASH_MAP(hash_map, hash_map_ll_info_t, key)
+
+  CONTAINS_KEY_HASH_MAP(hash_map, hash_map_ll_info_t, key, ret_val)
+
+  if (0 == ret_val) {
+    printf("After the remove of key %d, hash map contains the key\n\r", key);
+    return 1;
+  }
+
+  FREE_HASH_MAP(hash_map, hash_map_ll_info_t)
+}
