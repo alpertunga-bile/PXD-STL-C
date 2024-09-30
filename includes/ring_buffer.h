@@ -88,12 +88,11 @@
   void init_##RB_FUNC_ID##_info(RB_STRUCT_NAME *rb_info, size_t init_size) {   \
     memset(rb_info, 0, sizeof(RB_STRUCT_NAME));                                \
     rb_info->capacity = init_size;                                             \
-    rb_info->buffer = malloc(sizeof(RB_TYPE) * init_size);                     \
+    rb_info->buffer = malloc(sizeof(RB_TYPE) * rb_info->capacity);             \
   }                                                                            \
                                                                                \
   int add_value_##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info, RB_TYPE * value) {    \
-    int calc_write_index =                                                     \
-        (rb_info->write_index + 1) % (rb_info->capacity + 1);                  \
+    int calc_write_index = (rb_info->write_index + 1) % rb_info->capacity;     \
                                                                                \
     if (calc_write_index == rb_info->read_index) {                             \
       return 1;                                                                \
@@ -112,7 +111,7 @@
     }                                                                          \
                                                                                \
     *return_val = rb_info->buffer[rb_info->read_index];                        \
-    rb_info->read_index = (rb_info->read_index + 1) % (rb_info->capacity + 1); \
+    rb_info->read_index = (rb_info->read_index + 1) % rb_info->capacity;       \
                                                                                \
     return 0;                                                                  \
   }                                                                            \
