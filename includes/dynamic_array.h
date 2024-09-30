@@ -45,7 +45,6 @@
  * @example INIT_DYNAMIC_ARRAY(vector, vector_info_t, int, 5)
  */
 #define INIT_DYNAMIC_ARRAY(DA_NAME, DA_STRUCT_NAME, DA_TYPE, DA_INIT_SIZE)     \
-  DA_STRUCT_NAME DA_NAME;                                                      \
   memset(&(DA_NAME), 0, sizeof(DA_STRUCT_NAME));                               \
   (DA_NAME).array = malloc((DA_INIT_SIZE) * sizeof(DA_TYPE));                  \
   (DA_NAME).increment_size = sizeof(DA_TYPE) * 5;                              \
@@ -91,5 +90,55 @@
 #define FREE_DYNAMIC_ARRAY(DA_NAME)                                            \
   free((DA_NAME).array);                                                       \
   (DA_NAME).array = NULL;
+
+#define FORWARD_DECLARE_DYNAMIC_ARRAY_FUNCS(DA_FUNC_ID, DA_STRUCT_NAME,        \
+                                            DA_TYPE)                           \
+  void init_##DA_FUNC_ID##_info(DA_STRUCT_NAME *da_info, size_t init_size);    \
+                                                                               \
+  void add_##DA_FUNC_ID##(DA_STRUCT_NAME * da_info, DA_TYPE * value);          \
+                                                                               \
+  void shrink_##DA_FUNC_ID##(DA_STRUCT_NAME * da_info);                        \
+                                                                               \
+  void free_##DA_FUNC_ID##(DA_STRUCT_NAME * da_info);
+
+#define SOURCE_DECLARE_DYNAMIC_ARRAY_FUNCS(DA_FUNC_ID, DA_STRUCT_NAME,         \
+                                           DA_TYPE)                            \
+  void init_##DA_FUNC_ID##_info(DA_STRUCT_NAME *da_info, size_t init_size) {   \
+    memset(da_info, 0, sizeof(DA_STRUCT_NAME));                                \
+                                                                               \
+    da_info->array = malloc(init_size * sizeof(DA_STRUCT_NAME));               \
+    da_info->increment_size = sizeof(DA_TYPE) * 5;                             \
+    da_info->total_capacity = init_size;                                       \
+  }                                                                            \
+                                                                               \
+  void add_##DA_FUNC_ID##(DA_STRUCT_NAME * da_info, DA_TYPE * value) {         \
+    if (da_info->element_size == da_info->total_capacity) {                    \
+      int type_size = sizeof(da_info->array[0]);                               \
+      int current_size = da_info->element_size * type_size;                    \
+                                                                               \
+      da_info->array =                                                         \
+          realloc(da_info->array, current_size + da_info->increment_size);     \
+      da_info->total_capacity += da_info->increment_size / type_size;          \
+    }                                                                          \
+                                                                               \
+    da_info->array[da_info->element_size++] = *value;                          \
+  }                                                                            \
+                                                                               \
+  void shrink_##DA_FUNC_ID##(DA_STRUCT_NAME * da_info) {                       \
+    if (da_info->element_size == da_info->total_capacity) {                    \
+      return;                                                                  \
+    }                                                                          \
+                                                                               \
+    int type_size = sizeof(da_info->array[0]);                                 \
+    int current_size = da_info->element_size * type_size;                      \
+                                                                               \
+    da_info->array = realloc(da_info->array, current_size);                    \
+    da_info->total_capacity = da_info->element_size;                           \
+  }                                                                            \
+                                                                               \
+  void free_##DA_FUNC_ID##(DA_STRUCT_NAME * da_info) {                         \
+    free(da_info->array);                                                      \
+    da_info->array = NULL;                                                     \
+  }
 
 #endif
