@@ -30,13 +30,13 @@
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
-    HM_BOOL_VARIABLE = 0;                                                      \
+    HM_BOOL_VARIABLE = 1;                                                      \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *node = (HM_NAME).map[index];                   \
                                                                                \
     while (NULL != node) {                                                     \
       if ((HM_KEY) == node->key) {                                             \
-        HM_BOOL_VARIABLE = 1;                                                  \
+        HM_BOOL_VARIABLE = 0;                                                  \
         break;                                                                 \
       }                                                                        \
                                                                                \
@@ -49,14 +49,14 @@
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
-    HM_BOOL_VARIABLE = 0;                                                      \
+    HM_BOOL_VARIABLE = 1;                                                      \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
                                                                                \
     while (NULL != current_node) {                                             \
       if ((HM_KEY) == current_node->key &&                                     \
           (HM_VALUE) == current_node->value) {                                 \
-        HM_BOOL_VARIABLE = 1;                                                  \
+        HM_BOOL_VARIABLE = 0;                                                  \
         break;                                                                 \
       }                                                                        \
                                                                                \
@@ -87,7 +87,7 @@
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
-    int found = 0;                                                             \
+    int found = 1;                                                             \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
     HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
@@ -96,14 +96,14 @@
       prev_node = current_node;                                                \
                                                                                \
       if ((HM_KEY) == current_node->key) {                                     \
-        found = 1;                                                             \
+        found = 0;                                                             \
         break;                                                                 \
       }                                                                        \
                                                                                \
       current_node = (HM_LINKED_LIST_STRUCT_NAME *)(current_node->next);       \
     }                                                                          \
                                                                                \
-    if (0 == found) {                                                          \
+    if (1 == found) {                                                          \
       HM_LINKED_LIST_STRUCT_NAME *new_node =                                   \
           malloc(sizeof(HM_LINKED_LIST_STRUCT_NAME));                          \
       memset(new_node, 0, sizeof(HM_LINKED_LIST_STRUCT_NAME));                 \
@@ -125,7 +125,6 @@
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
-    int found = 0;                                                             \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
                                                                                \
@@ -144,7 +143,7 @@
   {                                                                            \
     size_t hash_value = (*(HM_NAME).hash_function)(HM_KEY);                    \
     int index = hash_value % ((HM_NAME).capacity);                             \
-    int found = 0;                                                             \
+    int found = 1;                                                             \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *current_node = (HM_NAME).map[index];           \
     HM_LINKED_LIST_STRUCT_NAME *prev_node = NULL;                              \
@@ -154,14 +153,14 @@
                                                                                \
       if ((HM_KEY) == current_node->key) {                                     \
         current_node->value = HM_VALUE;                                        \
-        found = 1;                                                             \
+        found = 0;                                                             \
         break;                                                                 \
       }                                                                        \
                                                                                \
       current_node = (HM_LINKED_LIST_STRUCT_NAME *)(current_node->next);       \
     }                                                                          \
                                                                                \
-    if (0 == found) {                                                          \
+    if (1 == found) {                                                          \
       HM_LINKED_LIST_STRUCT_NAME *new_node =                                   \
           malloc(sizeof(HM_LINKED_LIST_STRUCT_NAME));                          \
       memset(new_node, 0, sizeof(HM_LINKED_LIST_STRUCT_NAME));                 \
@@ -260,12 +259,12 @@
                                           HM_KEY_DATA_TYPE key,                \
                                           HM_VALUE_DATA_TYPE value);           \
                                                                                \
-  void update_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
-                                  HM_KEY_DATA_TYPE key,                        \
-                                  HM_VALUE_DATA_TYPE new_value);               \
+  void update_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,             \
+                                   HM_KEY_DATA_TYPE key,                       \
+                                   HM_VALUE_DATA_TYPE new_value);              \
                                                                                \
-  void remove_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
-                                  HM_KEY_DATA_TYPE key);                       \
+  void remove_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,             \
+                                   HM_KEY_DATA_TYPE key);                      \
                                                                                \
   void free_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info);
 
@@ -299,11 +298,11 @@
     while (NULL != node) {                                                     \
       if (key == node->key) {                                                  \
         *value = node->value;                                                  \
-        return 1;                                                              \
+        return 0;                                                              \
       }                                                                        \
     }                                                                          \
                                                                                \
-    return 0;                                                                  \
+    return 1;                                                                  \
   }                                                                            \
                                                                                \
   int contains_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,            \
@@ -315,13 +314,13 @@
                                                                                \
     while (NULL != node) {                                                     \
       if (key == node->key && value == node->value) {                          \
-        return 1;                                                              \
+        return 0;                                                              \
       }                                                                        \
                                                                                \
       node = (HM_LINKED_LIST_STRUCT_NAME *)node->next;                         \
     }                                                                          \
                                                                                \
-    return 0;                                                                  \
+    return 1;                                                                  \
   }                                                                            \
                                                                                \
   int contains_key_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
@@ -332,13 +331,13 @@
                                                                                \
     while (NULL != node) {                                                     \
       if (key == node->key) {                                                  \
-        return 1;                                                              \
+        return 0;                                                              \
       }                                                                        \
                                                                                \
       node = (HM_LINKED_LIST_STRUCT_NAME *)node->next;                         \
     }                                                                          \
                                                                                \
-    return 0;                                                                  \
+    return 1;                                                                  \
   }                                                                            \
                                                                                \
   void add_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,                \
@@ -408,9 +407,9 @@
     hash_map_info->total_elems++;                                              \
   }                                                                            \
                                                                                \
-  void update_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
-                                  HM_KEY_DATA_TYPE key,                        \
-                                  HM_VALUE_DATA_TYPE new_value) {              \
+  void update_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,             \
+                                   HM_KEY_DATA_TYPE key,                       \
+                                   HM_VALUE_DATA_TYPE new_value) {             \
     int index = get_index_from_hash_##HM_FUNC_ID##(hash_map_info, key);        \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *node = hash_map_info->map[index];              \
@@ -425,8 +424,8 @@
     }                                                                          \
   }                                                                            \
                                                                                \
-  void remove_value##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,              \
-                                  HM_KEY_DATA_TYPE key) {                      \
+  void remove_value_##HM_FUNC_ID##(HM_STRUCT_NAME * hash_map_info,             \
+                                   HM_KEY_DATA_TYPE key) {                     \
     int index = get_index_from_hash_##HM_FUNC_ID##(hash_map_info, key);        \
                                                                                \
     HM_LINKED_LIST_STRUCT_NAME *current_node = hash_map_info->map[index];      \

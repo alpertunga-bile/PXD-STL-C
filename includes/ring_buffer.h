@@ -31,7 +31,6 @@
  * @example INIT_RING_BUFFER(ring_buffer, ring_buffer_info_t, int, 7)
  */
 #define INIT_RING_BUFFER(RB_NAME, RB_STRUCT_NAME, RB_TYPE, RB_INIT_SIZE)       \
-  RB_STRUCT_NAME RB_NAME;                                                      \
   memset(&RB_NAME, 0, sizeof(RB_STRUCT_NAME));                                 \
   (RB_NAME).buffer = malloc(sizeof(RB_TYPE) * (RB_INIT_SIZE));                 \
   (RB_NAME).capacity = RB_INIT_SIZE;
@@ -45,7 +44,8 @@
  */
 #define ADD_VAL_RING_BUFFER(RB_NAME, RB_VALUE)                                 \
   {                                                                            \
-    int calc_write_index = ((RB_NAME).write_index + 1) % (RB_NAME).capacity;   \
+    int calc_write_index =                                                     \
+        ((RB_NAME).write_index + 1) % ((RB_NAME).capacity + 1);                \
     if (calc_write_index != (RB_NAME).read_index) {                            \
       (RB_NAME).buffer[(RB_NAME).write_index] = RB_VALUE;                      \
       (RB_NAME).write_index = calc_write_index;                                \
@@ -62,7 +62,8 @@
 #define GET_VAL_RING_BUFFER(RB_NAME, RB_VAL_NAME)                              \
   if ((RB_NAME).read_index != (RB_NAME).write_index) {                         \
     RB_VAL_NAME = (RB_NAME).buffer[(RB_NAME).read_index];                      \
-    (RB_NAME).read_index = ((RB_NAME).read_index + 1) % (RB_NAME).capacity;    \
+    (RB_NAME).read_index =                                                     \
+        ((RB_NAME).read_index + 1) % ((RB_NAME).capacity + 1);                 \
   }
 
 /*
@@ -81,41 +82,42 @@
                                                                                \
   int get_value_##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info, RB_TYPE * retun_val); \
                                                                                \
-  void free##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info);
+  void free_##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info);
 
 #define SOURCE_DECLARE_RING_BUFFER_FUNCS(RB_FUNC_ID, RB_STRUCT_NAME, RB_TYPE)  \
   void init_##RB_FUNC_ID##_info(RB_STRUCT_NAME *rb_info, size_t init_size) {   \
     memset(rb_info, 0, sizeof(RB_STRUCT_NAME));                                \
-    rb_info->buffer = malloc(sizeof(RB_TYPE) * init_size);                     \
     rb_info->capacity = init_size;                                             \
+    rb_info->buffer = malloc(sizeof(RB_TYPE) * init_size);                     \
   }                                                                            \
                                                                                \
   int add_value_##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info, RB_TYPE * value) {    \
-    int calc_write_index = (rb_info->write_index + 1) % rb_info->capacity;     \
+    int calc_write_index =                                                     \
+        (rb_info->write_index + 1) % (rb_info->capacity + 1);                  \
                                                                                \
     if (calc_write_index == rb_info->read_index) {                             \
-      return 0;                                                                \
+      return 1;                                                                \
     }                                                                          \
                                                                                \
     rb_info->buffer[rb_info->write_index] = *value;                            \
     rb_info->write_index = calc_write_index;                                   \
                                                                                \
-    return 1;                                                                  \
+    return 0;                                                                  \
   }                                                                            \
                                                                                \
   int get_value_##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info,                       \
                                RB_TYPE * return_val) {                         \
     if (rb_info->read_index == rb_info->write_index) {                         \
-      return 0;                                                                \
+      return 1;                                                                \
     }                                                                          \
                                                                                \
     *return_val = rb_info->buffer[rb_info->read_index];                        \
-    rb_info->read_index = (rb_info->read_index + 1) % rb_info->capacity;       \
+    rb_info->read_index = (rb_info->read_index + 1) % (rb_info->capacity + 1); \
                                                                                \
-    return 1;                                                                  \
+    return 0;                                                                  \
   }                                                                            \
                                                                                \
-  void free##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info) {                          \
+  void free_##RB_FUNC_ID##(RB_STRUCT_NAME * rb_info) {                         \
     free(rb_info->buffer);                                                     \
     rb_info->buffer = NULL;                                                    \
   }
