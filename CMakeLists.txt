@@ -77,6 +77,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
         ${PXD_TEST_DIR}/test_ring_buffer.h
         ${PXD_TEST_DIR}/test_hash_map.h
         ${PXD_TEST_DIR}/test_linked_list.h
+        ${PXD_TEST_DIR}/test_dynamic_array.h
     )
 
     set(PXD_TEST_SOURCE_FILES
@@ -87,6 +88,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
         ${PXD_TEST_DIR}/test_ring_buffer.c
         ${PXD_TEST_DIR}/test_hash_map.c
         ${PXD_TEST_DIR}/test_linked_list.c
+        ${PXD_TEST_DIR}/test_dynamic_array.c
     )
 
     add_executable(${TEST_PROJECT_NAME} ${PXD_TEST_SOURCE_FILES})
