@@ -74,7 +74,8 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     set(PXD_TEST_HEADER_FILES
         ${PXD_HEADER_FILES}
 
-        ${PXD_TEST_DIR}/temp_ds.h
+        ${PXD_TEST_DIR}/test_ring_buffer.h
+        ${PXD_TEST_DIR}/test_hash_map.h
     )
 
     set(PXD_TEST_SOURCE_FILES
@@ -82,7 +83,8 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 
         ${PXD_SOURCE_FILES}
 
-        ${PXD_TEST_DIR}/temp_ds.c
+        ${PXD_TEST_DIR}/test_ring_buffer.c
+        ${PXD_TEST_DIR}/test_hash_map.c
     )
 
     add_executable(${TEST_PROJECT_NAME} ${PXD_TEST_SOURCE_FILES})
@@ -94,7 +96,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     target_precompile_headers(
         ${TEST_PROJECT_NAME} PRIVATE
         ${COMMON_STD_HEADERS}
-        ${PXD_HEADER_FILES}
+        ${PXD_TEST_HEADER_FILES}
     )
 
 endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
