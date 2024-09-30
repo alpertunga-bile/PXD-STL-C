@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-#include "tests/test_ring_buffer.h"
+#include "tests/test_hash_map.h"
 
 int main() {
-  int ret_val = test_ring_buffer_w_funcs();
+  int ret_val = test_hash_map_w_funcs();
 
   return 0;
 }
