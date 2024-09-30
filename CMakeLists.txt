@@ -22,7 +22,7 @@ set(PXD_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/includes)
 set(PXD_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sources)
 
 set(PXD_HEADER_FILES
-    ${PXD_INCLUDE_DIR}/generic_linked_list.h
+    ${PXD_INCLUDE_DIR}/linked_list.h
     ${PXD_INCLUDE_DIR}/dynamic_array.h
     ${PXD_INCLUDE_DIR}/ring_buffer.h
     ${PXD_INCLUDE_DIR}/hash.h
@@ -31,7 +31,7 @@ set(PXD_HEADER_FILES
 )
 
 set(PXD_SOURCE_FILES
-    ${PXD_SOURCE_DIR}/generic_linked_list.c
+    ${PXD_SOURCE_DIR}/linked_list.c
     ${PXD_SOURCE_DIR}/dynamic_array.c
     ${PXD_SOURCE_DIR}/ring_buffer.c
     ${PXD_SOURCE_DIR}/hash.c
@@ -100,8 +100,6 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     )
 
 endif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-
-
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
