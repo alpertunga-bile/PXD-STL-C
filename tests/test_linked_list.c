@@ -51,7 +51,7 @@ int test_linked_list_w_funcs() {
 int test_linked_list_w_macros() {
   ll_info_t ll;
 
-  INIT_LINKED_LIST_STRUCT(ll, ll_info_t)
+  INIT_LINKED_LIST_STRUCT(ll, ll_info_t, NULL)
 
   int i = 0;
   for (i = 0; i < 100; ++i) {
@@ -78,7 +78,7 @@ int test_linked_list_w_macros() {
 
   int next_value = ((ll_node_t *)ll.head->next)->value;
 
-  REMOVE_VALUE_LINKED_LIST(ll, ll_node_t, next_value)
+  REMOVE_VALUE_LINKED_LIST(ll, ll_node_t, next_value, NULL)
 
   next_value = ((ll_node_t *)ll.head->next)->value;
 

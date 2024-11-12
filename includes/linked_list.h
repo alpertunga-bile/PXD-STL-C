@@ -18,10 +18,12 @@
     LL_NODE_NAME *head;                                                        \
     LL_NODE_NAME *end;                                                         \
     size_t total_elems;                                                        \
+    int (*eq_func)(LL_TYPE, LL_TYPE);                                          \
   } LL_STRUCT_NAME;
 
-#define INIT_LINKED_LIST_STRUCT(LL_NAME, LL_STRUCT_NAME)                       \
-  memset(&LL_NAME, 0, sizeof(LL_STRUCT_NAME));
+#define INIT_LINKED_LIST_STRUCT(LL_NAME, LL_STRUCT_NAME, LL_EQ_FUNC)           \
+  memset(&LL_NAME, 0, sizeof(LL_STRUCT_NAME));                                 \
+  (LL_NAME).eq_func = LL_EQ_FUNC;
 
 #define ADD_LAST_LINKED_LIST(LL_NAME, LL_NODE_NAME, LL_VALUE)                  \
   {                                                                            \
@@ -88,14 +90,29 @@
 
 #define REMOVE_VALUE_LINKED_LIST(LL_NAME, LL_NODE_NAME, LL_VALUE)              \
   {                                                                            \
-    if ((LL_VALUE) == ((LL_NAME).head->value)) {                               \
+    int head_eq = 1;                                                           \
+    if (NULL != (LL_NAME).eq_func) {                                           \
+      head_eq = (LL_NAME).eq_func((LL_VALUE), ((LL_NAME).head->value));        \
+    } else {                                                                   \
+      head_eq = (LL_VALUE) == ((LL_NAME).head->value);                         \
+    }                                                                          \
+                                                                               \
+    if (0 == head_eq) {                                                        \
       REMOVE_HEAD_LINKED_LIST((LL_NAME), LL_NODE_NAME)                         \
     } else {                                                                   \
       LL_NODE_NAME *iter = (LL_NAME).head->next;                               \
       LL_NODE_NAME *iter_prev = (LL_NAME).head;                                \
                                                                                \
       while (NULL != iter) {                                                   \
-        if (LL_VALUE == iter->value) {                                         \
+        int iter_eq = 1;                                                       \
+                                                                               \
+        if (NULL != (LL_NAME).eq_func) {                                       \
+          iter_eq = (LL_NAME).eq_func((LL_VALUE), ((LL_NAME).head->value));    \
+        } else {                                                               \
+          iter_eq = (LL_VALUE) == ((LL_NAME).head->value);                     \
+        }                                                                      \
+                                                                               \
+        if (0 == iter_eq) {                                                    \
           iter_prev->next = iter->next;                                        \
           free(iter);                                                          \
           break;                                                               \
