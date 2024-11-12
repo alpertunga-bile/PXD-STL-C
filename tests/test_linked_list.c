@@ -5,7 +5,7 @@ SOURCE_DECLARE_LINKED_LIST_FUNCS(temp_ll, ll_info_t, ll_node_t, int)
 int test_linked_list_w_funcs() {
   ll_info_t ll;
 
-  init_temp_ll_info(&ll);
+  init_temp_ll_info(&ll, NULL);
 
   int i = 0;
   for (i = 0; i < 100; ++i) {

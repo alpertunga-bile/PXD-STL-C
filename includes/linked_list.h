@@ -126,7 +126,8 @@
   }
 
 #define FORWARD_DECLARE_LINKED_LIST_FUNCS(LL_FUNC_ID, LL_STRUCT_NAME, LL_TYPE) \
-  void init_##LL_FUNC_ID##_info(LL_STRUCT_NAME *ll_info);                      \
+  void init_##LL_FUNC_ID##_info(LL_STRUCT_NAME *ll_info,                       \
+                                int (*eq_func)(LL_TYPE, LL_TYPE));             \
                                                                                \
   void add_last_##LL_FUNC_ID##(LL_STRUCT_NAME * ll_info, LL_TYPE * value);     \
                                                                                \
@@ -140,8 +141,10 @@
 
 #define SOURCE_DECLARE_LINKED_LIST_FUNCS(LL_FUNC_ID, LL_STRUCT_NAME,           \
                                          LL_NODE_NAME, LL_TYPE)                \
-  void init_##LL_FUNC_ID##_info(LL_STRUCT_NAME *ll_info) {                     \
+  void init_##LL_FUNC_ID##_info(LL_STRUCT_NAME *ll_info,                       \
+                                int (*eq_func)(LL_TYPE, LL_TYPE)) {            \
     memset(ll_info, 0, sizeof(LL_STRUCT_NAME));                                \
+    ll_info->eq_func = eq_func;                                                \
   }                                                                            \
                                                                                \
   void add_last_##LL_FUNC_ID##(LL_STRUCT_NAME * ll_info, LL_TYPE * value) {    \
@@ -199,7 +202,14 @@
       return;                                                                  \
     }                                                                          \
                                                                                \
-    if (*value == ll_info->head->value) {                                      \
+    int head_eq = 1;                                                           \
+    if (NULL != ll_info->eq_func) {                                            \
+      head_eq = ll_info->eq_func(*value, ll_info->head->value);                \
+    } else {                                                                   \
+      head_eq = (*value) == ll_info->head->value;                              \
+    }                                                                          \
+                                                                               \
+    if (head_eq) {                                                             \
       remove_head_##LL_FUNC_ID##(ll_info);                                     \
       return;                                                                  \
     }                                                                          \
@@ -208,7 +218,15 @@
     LL_NODE_NAME *prev_iter = ll_info->head;                                   \
                                                                                \
     while (NULL != iter) {                                                     \
-      if (*value == iter->value) {                                             \
+      int iter_eq = 1;                                                         \
+                                                                               \
+      if (NULL != ll_info->eq_func) {                                          \
+        iter_eq = ll_info->eq_func(*value, iter->value);                       \
+      } else {                                                                 \
+        iter_eq = (*value) == iter->value;                                     \
+      }                                                                        \
+                                                                               \
+      if (iter_eq) {                                                           \
         prev_iter->next = iter->next;                                          \
         free(iter);                                                            \
         iter = NULL;                                                           \
